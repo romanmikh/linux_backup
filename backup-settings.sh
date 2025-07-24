@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEST=$HOME/sys-backup           # any folder, version‑control it afterwards
+DEST=$HOME/linux_backup
 mkdir -p "$DEST"
 
 ## Package lists
@@ -27,9 +27,10 @@ sudo tar czf "$DEST/config_$(date +%F).tar.gz" \
 
 ## Commit to Git 
 cd "$DEST"
-git init -q 2>/dev/null || true
+git init -q
 git add .
 git commit -qm "snapshot $(date -I)"
-git remote add origin git@github.com:romanmikh/linux_backup.git   # once
-git push -q
+git remote | grep -q origin || \
+  git remote add origin git@github.com:romanmikh/linux_backup.git
+git push -q -u origin HEAD || echo "Push failed — check SSH or repo exists"
 
